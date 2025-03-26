@@ -6,4 +6,4 @@
 tqgps/tqgps is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 You can click the Preview link to take a look at your changes.
 --->
-https://github.com/tqgps/tqgps/blob/main/no3inArow.html
+<a href="https://github.com/tqgps/tqgps/blob/main/no3inArow.html">Not 3 In A Row</a>
