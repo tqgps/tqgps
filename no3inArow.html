@@ -20,7 +20,8 @@
         const grid = document.getElementById("grid");
         const message = document.getElementById("message");
         let placedPieces = 0;
-        const board = Array(3).fill().map(() => Array(3).fill(null));
+        // Correctly create a fresh 2-D array where every row is independent
+        const board = Array.from({ length: 3 }, () => Array(3).fill(null));
         
         function checkLoss() {
             for (let i = 0; i < 3; i++) {
@@ -32,11 +33,17 @@
             return false;
         }
         
+        // Helper to finish the game and free resources
+        function endGame(resultMessage) {
+            message.textContent = resultMessage;
+            // Disable further interaction and remove listeners to avoid memory leaks
+            Array.from(grid.children).forEach(c => c.removeEventListener("click", handleClick));
+        }
+
         function handleClick(event) {
-            const cell = event.target;
-            const index = Array.from(grid.children).indexOf(cell);
-            const row = Math.floor(index / 3);
-            const col = index % 3;
+            const cell = event.currentTarget;
+            const row = parseInt(cell.dataset.row, 10);
+            const col = parseInt(cell.dataset.col, 10);
             
             if (!board[row][col]) {
                 board[row][col] = "X";
@@ -45,14 +52,12 @@
                 placedPieces++;
                 
                 if (checkLoss()) {
-                    message.textContent = "You Lose! Three in a row!";
-                    grid.style.pointerEvents = "none";
+                    endGame("You Lose! Three in a row!");
                     return;
                 }
                 
                 if (placedPieces === 6) {
-                    message.textContent = "You Win! No three in a row!";
-                    grid.style.pointerEvents = "none";
+                    endGame("You Win! No three in a row!");
                 }
             }
         }
@@ -60,6 +65,9 @@
         for (let i = 0; i < 9; i++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
+            // Pre-compute and store grid coordinates to avoid O(n) search on every click
+            cell.dataset.row = Math.floor(i / 3);
+            cell.dataset.col = i % 3;
             cell.addEventListener("click", handleClick);
             grid.appendChild(cell);
         }
