@@ -23,6 +23,9 @@
         const board = Array(3).fill().map(() => Array(3).fill(null));
         
         function checkLoss() {
+            // Only check for three in a row if we have at least 3 pieces
+            if (placedPieces < 3) return false;
+            
             for (let i = 0; i < 3; i++) {
                 if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) return true;
                 if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) return true;
@@ -40,6 +43,7 @@
             
             if (!board[row][col]) {
                 board[row][col] = "X";
+                // Use textContent for security - ensures only text is set
                 cell.textContent = "X";
                 cell.classList.add("occupied");
                 placedPieces++;
@@ -50,7 +54,8 @@
                     return;
                 }
                 
-                if (placedPieces === 6) {
+                // Fixed win condition: check when all 9 cells are filled
+                if (placedPieces === 9) {
                     message.textContent = "You Win! No three in a row!";
                     grid.style.pointerEvents = "none";
                 }
