@@ -22,6 +22,24 @@
         let placedPieces = 0;
         const board = Array(3).fill().map(() => Array(3).fill(null));
         
+        function restartGame() {
+            placedPieces = 0;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    board[i][j] = null;
+                }
+            }
+            
+            const cells = grid.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('occupied');
+            });
+            
+            grid.style.pointerEvents = 'auto';
+            message.innerHTML = '';
+        }
+        
         function checkLoss() {
             for (let i = 0; i < 3; i++) {
                 if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) return true;
@@ -34,7 +52,19 @@
         
         function handleClick(event) {
             const cell = event.target;
-            const index = Array.from(grid.children).indexOf(cell);
+            
+            // Validate that the clicked element is a cell and has a valid index
+            if (!cell.classList.contains('cell') || !cell.dataset.index) {
+                return;
+            }
+            
+            const index = parseInt(cell.dataset.index);
+            
+            // Validate index is within bounds
+            if (isNaN(index) || index < 0 || index >= 9) {
+                return;
+            }
+            
             const row = Math.floor(index / 3);
             const col = index % 3;
             
@@ -45,13 +75,13 @@
                 placedPieces++;
                 
                 if (checkLoss()) {
-                    message.textContent = "You Lose! Three in a row!";
+                    message.textContent = "You Lose! Three in a row! <button onclick='restartGame()'>Play Again</button>";
                     grid.style.pointerEvents = "none";
                     return;
                 }
                 
-                if (placedPieces === 6) {
-                    message.textContent = "You Win! No three in a row!";
+                if (placedPieces === 4) {
+                    message.textContent = "You Win! No three in a row! <button onclick='restartGame()'>Play Again</button>";
                     grid.style.pointerEvents = "none";
                 }
             }
@@ -60,6 +90,7 @@
         for (let i = 0; i < 9; i++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
+            cell.dataset.index = i;
             cell.addEventListener("click", handleClick);
             grid.appendChild(cell);
         }
